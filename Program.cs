@@ -66,7 +66,167 @@ namespace morpion
             Console.WriteLine("\n");
         }
 
+        //Niveau difficulté de l'IA
+        static int SaisieModeDifficulteIA()
+        {
+            Console.WriteLine("Veuillez choisir le mode de difficulté, \n" +
+                                "1) Mode aléatoire \n" +
+                                "2) Mode défenssif \n" +
+                                "3) Mode offenssif \n");
 
+            string modeIA = Console.ReadLine();
+            
+
+            while (modeIA.Length >= 1)
+            {
+                if (modeIA == "1")
+                {
+                    return 1;
+                }
+                else if (modeIA == "2")
+                {
+                    return 2;
+                }
+                else if (modeIA == "3")
+                {
+                    return 3;
+                }
+
+                Console.WriteLine("Veuillez entrer 1 caractères max, difficulté 1, 2 ou 3");
+                modeIA = Console.ReadLine();
+            }
+            return 0;
+        }
+        static void ExeModeIA(int niveau_difficulte, ref char[,] mytab)
+        {
+            switch (niveau_difficulte)
+            {
+                case 1:
+                    ActionIAJoueRandom(ref mytab);
+                    break;
+                case 2:
+                    ActionOrdiJoueDef(ref mytab);
+                    break;
+                case 3:
+                    ActionOrdiJoueOff(ref mytab);
+                    break;
+            }
+        }
+        //Recupère l'emplacement ou l'IA doit jouer
+        static string EmplacementGagnant(char[,] mytab, char symbole)
+        {
+            //Check horizontal
+            //Première ligne
+            if (mytab[0, 0] == symbole && mytab[0, 1] == symbole && mytab[0, 2] == '.')
+            {
+                return "02";
+            }
+            if (mytab[0, 2] == symbole && mytab[0, 1] == symbole && mytab[0, 0] == '.')
+            {
+                return "00";
+            }
+            if (mytab[0, 0] == symbole && mytab[0, 2] == symbole && mytab[0, 1] == '.')
+            {
+                return "01";
+            }
+            //Deuxième ligne
+            if (mytab[1, 0] == symbole && mytab[1, 1] == symbole && mytab[1, 2] == '.')
+            {
+                return "12";
+            }
+            if (mytab[1, 2] == symbole && mytab[1, 1] == symbole && mytab[1, 0] == '.')
+            {
+                return "10";
+            }
+            if (mytab[1, 0] == symbole && mytab[1, 2] == symbole && mytab[1, 1] == '.')
+            {
+                return "11";
+            }
+            //Troisième ligne
+            if (mytab[2, 0] == symbole && mytab[2, 1] == symbole && mytab[2, 2] == '.')
+            {
+                return "22";
+            }
+            if (mytab[2, 2] == symbole && mytab[2, 1] == symbole && mytab[2, 0] == '.')
+            {
+                return "20";
+            }
+            if (mytab[2, 0] == symbole && mytab[2, 2] == symbole && mytab[2, 1] == '.')
+            {
+                return "21";
+            }
+
+            //Check vertical
+            //Première colonne
+            if (mytab[0, 0] == symbole && mytab[1, 0] == symbole && mytab[2, 0] == '.')
+            {
+                return "20";
+            }
+            if (mytab[0, 0] == symbole && mytab[2, 0] == symbole && mytab[1, 0] == '.')
+            {
+                return "10";
+            }
+            if (mytab[2, 0] == symbole && mytab[1, 0] == symbole && mytab[0, 0] == '.')
+            {
+                return "00";
+            }
+            //Deuxième colonne
+            if (mytab[0, 1] == symbole && mytab[1, 1] == symbole && mytab[2, 1] == '.')
+            {
+                return "21";
+            }
+            if (mytab[0, 1] == symbole && mytab[2, 1] == symbole && mytab[1, 1] == '.')
+            {
+                return "11";
+            }
+            if (mytab[2, 1] == symbole && mytab[1, 1] == symbole && mytab[0, 1] == '.')
+            {
+                return "01";
+            }
+            //Troisième colonne
+            if (mytab[0, 2] == symbole && mytab[1, 2] == symbole && mytab[2, 2] == '.')
+            {
+                return "22";
+            }
+            if (mytab[0, 2] == symbole && mytab[2, 2] == symbole && mytab[1, 2] == '.')
+            {
+                return "12";
+            }
+            if (mytab[2, 2] == symbole && mytab[1, 2] == symbole && mytab[0, 2] == '.')
+            {
+                return "02";
+            }
+
+            //Check diagonal
+            //Diagonal 00 11 22
+            if (mytab[0, 0] == symbole && mytab[1, 1] == symbole && mytab[2, 2] == '.')
+            {
+                return "22";
+            }
+            if (mytab[2, 2] == symbole && mytab[1, 1] == symbole && mytab[0, 0] == '.')
+            {
+                return "00";
+            }
+            if (mytab[0, 0] == symbole && mytab[2, 2] == symbole && mytab[1, 1] == '.')
+            {
+                return "11";
+            }
+            //Diagonal 02 11 20
+            if (mytab[0, 2] == symbole && mytab[1, 1] == symbole && mytab[2, 0] == '.')
+            {
+                return "20";
+            }
+            if (mytab[2, 0] == symbole && mytab[1, 1] == symbole && mytab[0, 2] == '.')
+            {
+                return "02";
+            }
+            if (mytab[0, 2] == symbole && mytab[2, 0] == symbole && mytab[1, 1] == '.')
+            {
+                return "11";
+            }
+
+            return "pas_de_coup_gagnant";
+        }
         //Génère une coordonnée aléatoire vide et place le coup de l'IA
         static void ActionIAJoueRandom(ref char[,] mytab)
         {
@@ -82,75 +242,49 @@ namespace morpion
 
             mytab[ligne, colonne] = 'x';
         }
-        // IA Empêche le joueur de gagner ou gagne à tout prix
+        // IA Empêche le joueur de gagner
         static void ActionOrdiJoueDef(ref char[,] mytab)
         {
-            Console.WriteLine("Ordinateur joue ... \n");
+            string coupIA = EmplacementGagnant(mytab, 'o');
 
-            if (mytab[1, 1] == '_')
+            if (coupIA == "pas_de_coup_gagnant")
             {
-                mytab[1, 1] = 'x';
+                ActionIAJoueRandom(ref mytab);
             }
-            else if (mytab[1, 1] == '_')
+            else
             {
-
+                int ligne = (int)Char.GetNumericValue(coupIA[0]);
+                int colonne = (int)Char.GetNumericValue(coupIA[1]);
+                mytab[ligne, colonne] = 'x';
             }
-            else if (mytab[0, 0] == 'o' && mytab[0, 1] == 'o')
-            {
-                mytab[0, 2] = 'x';
-            }
-            else if (mytab[0, 2] == 'o' && mytab[0, 1] == 'o')
-            {
-                mytab[0, 0] = 'x';
-            }
-
-            else if (mytab[1, 0] == 'o' && mytab[1, 1] == 'o')
-            {
-                mytab[1, 2] = 'x';
-            }
-            else if (mytab[1, 2] == 'o' && mytab[1, 1] == 'o')
-            {
-                mytab[1, 0] = 'x';
-            }
-
-            else if (mytab[2, 0] == 'o' && mytab[2, 1] == 'o')
-            {
-                mytab[2, 2] = 'x';
-            }
-            else if (mytab[2, 2] == 'o' && mytab[2, 1] == 'o')
-            {
-                mytab[2, 0] = 'x';
-            }
-
-            else if (mytab[0, 0] == 'o' && mytab[0, 2] == 'o')
-            {
-                mytab[0, 1] = 'x';
-            }
-            else if (mytab[1, 0] == 'o' && mytab[1, 2] == 'o')
-            {
-                mytab[2, 0] = 'x';
-            }
-            else if (mytab[2, 0] == 'o' && mytab[2, 2] == 'o')
-            {
-                mytab[2, 1] = 'x';
-            }
-
-            else if (mytab[0, 0] == 'o' && mytab[2, 0] == 'o')
-            {
-                mytab[1, 0] = 'x';
-            }
-            else if (mytab[0, 1] == 'o' && mytab[2, 1] == 'o')
-            {
-                mytab[1, 1] = 'x';
-            }
-            else if (mytab[2, 2] == 'o' && mytab[0, 2] == 'o')
-            {
-                mytab[1, 2] = 'x';
-            }
-
-
         }
+        // IA Cherche a gagner a tout prix
+        static void ActionOrdiJoueOff(ref char[,] mytab)
+        {
+            string joueurGagne = EmplacementGagnant(mytab, 'o');
+            string iaGagne = EmplacementGagnant(mytab, 'x');
 
+            if (mytab[1,1] == '.')
+            {
+                mytab[1, 1] = 'x';
+            }
+            else if (joueurGagne != "pas_de_coup_gagnant")
+            {
+                int ligne = (int)Char.GetNumericValue(joueurGagne[0]);
+                int colonne = (int)Char.GetNumericValue(joueurGagne[1]);
+                mytab[ligne, colonne] = 'x';
+            }
+            else if (iaGagne != "pas_de_coup_gagnant")
+            {
+                int ligne = (int)Char.GetNumericValue(iaGagne[0]);
+                int colonne = (int)Char.GetNumericValue(iaGagne[1]);
+                mytab[ligne, colonne] = 'x';
+            }
+            else
+            {
+                ActionIAJoueRandom(ref mytab);
+            }
+        }
 
         //Fonctions de gestion du jeu
         static bool CheckGagne(char[,] mytab, char symbole)
@@ -222,14 +356,18 @@ namespace morpion
             char[,] plateau = new char[3, 3];
             Remplitab(ref plateau);
 
-
             //Variable fin de partie
             bool fin_de_jeux = false;
-
-
+            //Variable du mode IA
+            int difficulteIA = 0;
 
             while (fin_de_jeux == false)
             {
+                //Choix du mode de l'IA
+                if (difficulteIA == 0)
+                {
+                    difficulteIA = SaisieModeDifficulteIA();
+                }
                 //Action Joueur___________________________________________
                 Console.WriteLine("A votre tour de jouer");
                 Console.WriteLine("Veuillez entrer coordonnée de Ligne et de Colonne");
@@ -255,6 +393,7 @@ namespace morpion
                     {
                         Console.Clear();
                         Remplitab(ref plateau);
+                        difficulteIA = 0;
                     }
                     else break;
                 }
@@ -262,7 +401,7 @@ namespace morpion
                 else
                 {
                     Console.WriteLine("Ordinateur joue ...");
-                    ActionIAJoueRandom(ref plateau);
+                    ExeModeIA(difficulteIA, ref plateau);
                     Affichetab(plateau);
                     //Check recommencer
                     if (CheckGagne(plateau, 'x'))
@@ -274,12 +413,13 @@ namespace morpion
                         {
                             Console.Clear();
                             Remplitab(ref plateau);
+                            difficulteIA = 0;
                         }
                         else break;
                     }
                 }
             }
-
+            Console.WriteLine("Appuyez sur n'importe qu'elle touche pour quitter");
             Console.ReadKey();
 
         }
